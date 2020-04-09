@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model agent {
+  address     String?
+  created_on  DateTime @default(now())
+  external_id String   @unique
+  id          Int      @default(autoincrement()) @id
+  name        String   @unique
+  updated_on  DateTime @default(now())
+  parcel      parcel[]
+}
+
+model carrier {
+  created_on       DateTime           @default(now())
+  id               Int                @default(autoincrement()) @id
+  name             String             @unique
+  updated_on       DateTime           @default(now())
+  parcel           parcel[]
+  retailer_carrier retailer_carrier[]
+}
+
+model customers {
+  age       Int?
+  createdAt DateTime
+  firstname String?
+  id        Int      @default(autoincrement()) @id
+  lastname  String?
+  updatedAt DateTime
+}
+
+model parcel {
+  agent_id     Int?
+  carrier_id   Int?
+  created_on   DateTime       @default(now())
+  external_id  String         @unique
+  id           Int            @default(autoincrement()) @id
+  retailer_id  Int?
+  status       String
+  type         String
+  updated_on   DateTime       @default(now())
+  user_id      Int?
+  agent        agent?         @relation(fields: [agent_id], references: [id])
+  carrier      carrier?       @relation(fields: [carrier_id], references: [id])
+  retailer     retailer?      @relation(fields: [retailer_id], references: [id])
+  user         user?          @relation(fields: [user_id], references: [id])
+  parcel_event parcel_event[]
+
+  @@index([agent_id], name: "agent_id")
+  @@index([carrier_id], name: "carrier_id")
+  @@index([retailer_id], name: "retailer_id")
+  @@index([user_id], name: "user_id")
+}
+
+model parcel_event {
+  created_on DateTime @default(now())
+  from_event String
+  id         Int      @default(autoincrement()) @id
+  parcel_id  Int?
+  source     String   @default("CARRIER")
+  to_event   String
+  updated_on DateTime @default(now())
+  parcel     parcel?  @relation(fields: [parcel_id], references: [id])
+
+  @@index([parcel_id], name: "parcel_id")
+}
+
+model retailer {
+  created_on       DateTime           @default(now())
+  id               Int                @default(autoincrement()) @id
+  name             String             @unique
+  updated_on       DateTime           @default(now())
+  parcel           parcel[]
+  retailer_carrier retailer_carrier[]
+}
+
+model retailer_carrier {
+  carrier_id  Int
+  retailer_id Int
+  carrier     carrier  @relation(fields: [carrier_id], references: [id])
+  retailer    retailer @relation(fields: [retailer_id], references: [id])
+
+  @@id([retailer_id, carrier_id])
+  @@index([carrier_id], name: "carrier_id")
+}
+
+model retailers {
+  createdAt DateTime?
+  id        Int       @default(autoincrement()) @id
+  name      String?
+  updatedAt DateTime?
+}
+
+model user {
+  address    String?
+  created_on DateTime @default(now())
+  email      String   @unique
+  first_name String
+  id         Int      @default(autoincrement()) @id
+  last_name  String
+  updated_on DateTime @default(now())
+  parcel     parcel[]
+}
