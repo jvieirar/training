@@ -8,6 +8,10 @@ export default class ParcelService {
   }
 
   findAllParcels() {
-    return this.parcelRepository.findAllParcels();
+    return this.parcelRepository.findAll();
+  }
+
+  getOneParcelByExternalId(externalId: string) {
+    return this.parcelRepository.findOneByExternalId(externalId);
   }
 }

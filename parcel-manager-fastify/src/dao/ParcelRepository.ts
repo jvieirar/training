@@ -4,7 +4,10 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default class ParcelRepository {
-  findAllParcels = async () => {
+  async findAll() {
     return await prisma.parcel.findMany();
-  };
+  }
+  async findOneByExternalId(externalId: string) {
+    return await prisma.parcel.findOne({ where: { external_id: externalId } });
+  }
 }
