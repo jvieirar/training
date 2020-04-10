@@ -2,7 +2,11 @@ import ParcelService from '../service/ParcelService';
 const parcelService = new ParcelService();
 
 async function getAllParcels(req: any, res: any) {
+  console.log('getAllParcels');
+
   const parcels = await parcelService.findAllParcels();
+  console.log(`Return ${parcels?.length} parcels`);
+
   return parcels;
 }
 
