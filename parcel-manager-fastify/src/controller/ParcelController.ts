@@ -1,13 +1,13 @@
 import ParcelService from '../service/ParcelService';
 const parcelService = new ParcelService();
 import fastify, { FastifyRequest, FastifyReply, FastifyError } from 'fastify';
-import { ParcelRequestDto } from '../dto/ParcelRequestDto';
+import ParcelRequestDto, { ParcelRequestDtoValidation, ParcelRequestUpdateDtoValidation } from '../dto/ParcelRequestDto';
 import { Server, IncomingMessage, ServerResponse } from 'http';
 
 async function getAllParcels(request: any, reply: any) {
   console.log('getAllParcels');
 
-  const parcels = await parcelService.findAllParcels();
+  const parcels = await parcelService.findAll();
   console.log(`Return ${parcels?.length} parcels`);
 
   return parcels;
@@ -16,20 +16,29 @@ async function getAllParcels(request: any, reply: any) {
 async function getOneParcelByExternalId(request: FastifyRequest, reply: FastifyReply<any>) {
   const { externalId } = request.params;
   console.log(`getOneParcelByExternalId: '${externalId}'`);
-
-  const parcel = await parcelService.getOneParcelByExternalId(externalId);
-
-  if (!parcel) {
-    const error: ErrorDto = { statusCode: 404, error: 'Not found', message: `Parcel '${externalId}' not found` };
-    reply.status(404).send(error);
-  } else {
+  try {
+    const parcel = await parcelService.findOneByExternalId(externalId);
     return parcel;
+  } catch (error) {
+    reply.status(404).send(error);
   }
 }
 
 async function createOneParcel({ body }: { body: ParcelRequestDto }, reply: any) {
-  console.log({ boyd: body });
-  return body;
+  console.log({ body });
+  return await parcelService.create(body);
+}
+
+async function updateOneParcel(request: { params: { externalId: string }; body: ParcelRequestDto }, reply: FastifyReply<any>) {
+  // async function updateOneParcel({ body }: { body: ParcelRequestDto }, reply: any) {
+  const { externalId } = request.params;
+  const { body }: { body: ParcelRequestDto } = request;
+  try {
+    const parcel = await parcelService.findOneByExternalId(externalId);
+    return await parcelService.update(parcel, body);
+  } catch (error) {
+    reply.status(404).send(error);
+  }
 }
 
 module.exports = function (fastify: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse>, opts: any, next: any) {
@@ -38,26 +47,26 @@ module.exports = function (fastify: fastify.FastifyInstance<Server, IncomingMess
   // get one parcel
   fastify.get('/:externalId', getOneParcelByExternalId);
   // create one parcel
+  // <Query, Params, Headers, Body>
   fastify.post<unknown, unknown, unknown, ParcelRequestDto>(
     '/',
     {
       schema: {
-        body: {
-          type: 'object',
-          properties: {
-            externalId: { type: 'string' },
-            type: { type: 'string' },
-            status: { type: 'string' },
-            userId: { type: 'number' },
-            agentId: { type: 'number' },
-            retailerId: { type: 'number' },
-            carrierId: { type: 'number' },
-          },
-          required: ['externalId', 'type'],
-        },
+        body: ParcelRequestDtoValidation,
       },
     },
     createOneParcel,
+  );
+  // update one parcel
+  // <Query, Params, Headers, Body>
+  fastify.patch<unknown, { externalId: string }, unknown, ParcelRequestDto>(
+    '/:externalId',
+    {
+      schema: {
+        body: ParcelRequestUpdateDtoValidation,
+      },
+    },
+    updateOneParcel,
   );
 
   next();
