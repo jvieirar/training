@@ -54,10 +54,13 @@ async function getParcelEvents(request: { params: { externalId: string } }, repl
 module.exports = function (fastify: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse>, opts: any, next: any) {
   // list parcels
   fastify.get('/list', getAllParcels);
+
   // get one parcel
   fastify.get('/:externalId', getOneParcelByExternalId);
+
   // get parcel's events
   fastify.get('/:externalId/event/list', getParcelEvents);
+
   // create one parcel
   // <Query, Params, Headers, Body>
   fastify.post<unknown, unknown, unknown, ParcelRequestDto>(
@@ -69,6 +72,7 @@ module.exports = function (fastify: fastify.FastifyInstance<Server, IncomingMess
     },
     createOneParcel,
   );
+
   // update one parcel
   // <Query, Params, Headers, Body>
   fastify.patch<unknown, { externalId: string }, unknown, ParcelRequestDto>(
