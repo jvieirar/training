@@ -6,6 +6,7 @@ const API_PREFIX = '/api/v1';
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({});
 
 server.register(require('./controller/ParcelController'), { prefix: `${API_PREFIX}/parcel` });
+server.register(require('./controller/RetailerController'), { prefix: `${API_PREFIX}/retailer` });
 
 const start = async () => {
   try {

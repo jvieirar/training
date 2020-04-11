@@ -41,11 +41,23 @@ async function updateOneParcel(request: { params: { externalId: string }; body: 
   }
 }
 
+async function getParcelEvents(request: { params: { externalId: string } }, reply: FastifyReply<any>) {
+  const { externalId } = request.params;
+  try {
+    const parcel = await parcelService.findOneByExternalId(externalId);
+    return await parcelService.getParcelEvents(parcel?.external_id || externalId);
+  } catch (error) {
+    reply.status(404).send(error);
+  }
+}
+
 module.exports = function (fastify: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse>, opts: any, next: any) {
   // list parcels
   fastify.get('/list', getAllParcels);
   // get one parcel
   fastify.get('/:externalId', getOneParcelByExternalId);
+  // get parcel's events
+  fastify.get('/:externalId/event/list', getParcelEvents);
   // create one parcel
   // <Query, Params, Headers, Body>
   fastify.post<unknown, unknown, unknown, ParcelRequestDto>(

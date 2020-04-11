@@ -1,4 +1,4 @@
-import { PrismaClient, parcel, parcelUpdateInput, parcelCreateInput } from '@prisma/client';
+import { PrismaClient, parcel, parcelUpdateInput, parcelCreateInput, parcel_event } from '@prisma/client';
 import ParcelRequestDto from '../dto/ParcelRequestDto';
 
 export default class ParcelService {
@@ -12,6 +12,7 @@ export default class ParcelService {
   async findAll() {
     return await this.prisma.parcel.findMany();
   }
+
   async findOneByExternalId(externalId: string): Promise<parcel | null> {
     const parcel = await this.prisma.parcel.findOne({ where: { external_id: externalId } });
     if (!parcel) {
@@ -21,16 +22,23 @@ export default class ParcelService {
       return parcel;
     }
   }
+
   async create(data: ParcelRequestDto) {
     return await this.prisma.parcel.create({
       data: getInputValuesFromData(data),
     });
   }
+
   async update(parcel: parcel | null, data: Omit<ParcelRequestDto, 'externalId'>) {
     return await this.prisma.parcel.update({
       where: { external_id: parcel?.external_id },
       data: getUpdateValuesFromData(data),
     });
+  }
+
+  // precondition: parcel with external_id: externalId exists
+  async getParcelEvents(externalId: string): Promise<parcel_event[]> {
+    return await this.prisma.parcel.findOne({ where: { external_id: externalId } }).parcel_event();
   }
 }
 
