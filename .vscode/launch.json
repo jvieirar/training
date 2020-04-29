@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ParcelManagerApplication<parcel_manager>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "mainClass": "com.training.parcel_manager.ParcelManagerApplication",
+      "projectName": "parcel_manager",
+      "args": ""
+    }
+  ]
+}

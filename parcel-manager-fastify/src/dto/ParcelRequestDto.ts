@@ -33,3 +33,26 @@ export const ParcelRequestUpdateDtoValidation = {
     carrierId: { type: 'number' },
   },
 };
+
+interface Parcel {
+  externalId: string;
+  createdOn: Date;
+  type: string;
+  status: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  agent: {
+    name: string;
+    externalId: string;
+    address: string;
+  };
+  retailer: {
+    name: string;
+  };
+  carrier: {
+    name: string;
+  };
+}
