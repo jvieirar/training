@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,7 +15,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Entity
 @Data
@@ -28,14 +26,15 @@ public class Carrier {
   private Long id;
 
   @Column
-  @Getter
   private String name;
 
   @CreationTimestamp
   @Column(name = "created_on")
+  @JsonIgnore
   private Timestamp createdOn;
 
   @UpdateTimestamp
   @Column(name = "updated_on")
+  @JsonIgnore
   private Timestamp updatedOn;
 }

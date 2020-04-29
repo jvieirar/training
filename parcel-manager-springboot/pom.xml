@@ -7,8 +7,8 @@
 		<version>2.2.5.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>au.com.parcelpoint.api</groupId>
-	<artifactId>address-api</artifactId>
+	<groupId>au.com.training</groupId>
+	<artifactId>parcel-manager</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<properties>
